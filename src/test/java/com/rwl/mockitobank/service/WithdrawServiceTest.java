@@ -14,6 +14,7 @@ import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
+import org.mockito.Mockito;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -33,106 +34,15 @@ public class WithdrawServiceTest {
     @Before
     public void setUp() {
         withdrawService = new WithdrawServiceImpl();
-        BankAccountRepo bankAccountRepo = new BankAccountRepo() {
+        BankAccountRepo bankAccountRepo = Mockito.mock(BankAccountRepo.class);
+        BankAccount account = new BankAccount();
+        account.setBalances(1000d);
+        // findOne with any id, return account that balance = 1000
+        Mockito.when(bankAccountRepo.findOne(Mockito.anyInt())).thenReturn(account);
 
-            @Override
-            public List findAll() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public List findAll(Sort sort) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public List findAll(Iterable itrbl) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public List save(Iterable itrbl) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void flush() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void deleteInBatch(Iterable itrbl) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void deleteAllInBatch() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public Page findAll(Pageable pgbl) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public long count() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void delete(Iterable itrbl) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void deleteAll() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public BankAccount findByNameContains(String name) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public <S extends BankAccount> S saveAndFlush(S s) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public BankAccount getOne(Integer id) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public <S extends BankAccount> S save(S s) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public BankAccount findOne(Integer id) {
-                BankAccount account = new BankAccount();
-                account.setId(1);
-                account.setBalances(1000d);
-                return account;
-            }
-
-            @Override
-            public boolean exists(Integer id) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void delete(Integer id) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void delete(BankAccount t) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-        };
+        // findOne with id only 1
+//        Mockito.when(bankAccountRepo.findOne(1)).thenReturn(account);
+        
         ReflectionTestUtils.setField(withdrawService, "bankAccountRepo", bankAccountRepo);
     }
 
