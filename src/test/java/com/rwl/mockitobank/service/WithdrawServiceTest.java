@@ -27,6 +27,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class WithdrawServiceTest {
 
     private WithdrawService withdrawService;
+    private BankAccountRepo bankAccountRepo;
+    private BankAccount account;
 
     public WithdrawServiceTest() {
     }
@@ -34,15 +36,14 @@ public class WithdrawServiceTest {
     @Before
     public void setUp() {
         withdrawService = new WithdrawServiceImpl();
-        BankAccountRepo bankAccountRepo = Mockito.mock(BankAccountRepo.class);
-        BankAccount account = new BankAccount();
+        bankAccountRepo = Mockito.mock(BankAccountRepo.class);
+        account = new BankAccount();
         account.setBalances(1000d);
         // findOne with any id, return account that balance = 1000
         Mockito.when(bankAccountRepo.findOne(Mockito.anyInt())).thenReturn(account);
 
         // findOne with id only 1
 //        Mockito.when(bankAccountRepo.findOne(1)).thenReturn(account);
-        
         ReflectionTestUtils.setField(withdrawService, "bankAccountRepo", bankAccountRepo);
     }
 
@@ -68,5 +69,16 @@ public class WithdrawServiceTest {
         Double balance = withdrawService.widthdraw(1, 1000d);
         Assertions.assertThat(balance)
                 .isEqualTo(0d);
+    }
+
+    @Test
+    public void demo_verify() {
+        account = Mockito.mock(BankAccount.class);
+        Mockito.when(account.getBalances()).thenReturn(1000d);
+        Mockito.when(bankAccountRepo.findOne(Mockito.anyInt())).thenReturn(account);
+        ReflectionTestUtils.setField(withdrawService, "bankAccountRepo", bankAccountRepo);
+        
+        Double balance = withdrawService.widthdraw(1, 500d);
+        Mockito.verify(account).setBalances(500d);
     }
 }
